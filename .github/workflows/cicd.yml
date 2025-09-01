@@ -135,4 +135,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: myspacesandy/bankapp:latest
+          tags: sandy199/bankapp:latest
