@@ -9,38 +9,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
   security-check:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Trivy installation
-      run: |
-        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
-        sudo apt-get update -y
-        sudo apt-get install -y trivy
+      - name: Trivy installation
+        run: |
+          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update -y
+          sudo apt-get install -y trivy
 
-    - name: Run Trivy vulnerability scanner
-      run: trivy fs --format json -o fs-report.json --severity HIGH,CRITICAL .
+      - name: Run Trivy vulnerability scanner
+        run: trivy fs --format json -o fs-report.json --severity HIGH,CRITICAL .
 
-    - name: Gitleaks installation
-      run: sudo apt-get install -y gitleaks
+      - name: Gitleaks installation
+        run: sudo apt-get install -y gitleaks
 
-    - name: Run Gitleaks scanner
-      run: gitleaks detect --source . --report-path gitleaks-report.json --report-format json
-
-
-
+      - name: Run Gitleaks scanner
+        run: gitleaks detect --source . --report-path gitleaks-report.json --report-format json
