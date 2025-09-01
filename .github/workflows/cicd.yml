@@ -19,27 +19,28 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-  secuiryty-check:
-    runs-on: ubuntu-latest
+  security-check:
+  runs-on: ubuntu-latest
 
-    steps:
+  steps:
     - uses: actions/checkout@v4
+
     - name: Trivy installation
       run: |
-        sudo apt-get install wget apt-transport-https gnupg lsb-release
+        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
         sudo apt-get update -y
-        sudo apt-get install trivy -y
-
+        sudo apt-get install -y trivy
 
     - name: Run Trivy vulnerability scanner
-      run: trivy fs --format table -o -fs-report.json
+      run: trivy fs --format json -o fs-report.json --severity HIGH,CRITICAL .
 
-    - name: Gitleak installation 
-      run:  sudo apt-get install gitleaks -y
+    - name: Gitleaks installation
+      run: sudo apt-get install -y gitleaks
 
-    - name: Run Gitleak scanner
-      run: gitleaks detect source . -r gitleaks-report.json -f json
-      
+    - name: Run Gitleaks scanner
+      run: gitleaks detect --source . --report-path gitleaks-report.json --report-format json
+
+
 
