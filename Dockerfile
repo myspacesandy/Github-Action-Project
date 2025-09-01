@@ -6,7 +6,7 @@ RUN ls
 
 ENV APP_HOME /usr/src/app
 
-COPY app/*.jar $APP_HOME/app.jar
+COPY Github-Action-Project/Github-Action-Project/app/*.jar $APP_HOME/app.jar
 
 WORKDIR $APP_HOME
 
